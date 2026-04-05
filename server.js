@@ -37,6 +37,9 @@ function adminAuth(req, res, next) {
   next()
 }
 
+// ── Root redirect ─────────────────────────────────────────────────────────
+app.get('/', (req, res) => res.redirect('/admin'))
+
 // ── Admin: Dashboard page ─────────────────────────────────────────────────
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'))
