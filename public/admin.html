@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BillEasy — Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-card: #1a1f35;
+      --bg-card-hover: #222845;
+      --border: #2a3050;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --brand: #f97316;
+      --brand-light: #fb923c;
+      --brand-glow: rgba(249, 115, 22, 0.15);
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.12);
+      --yellow: #eab308;
+      --yellow-bg: rgba(234, 179, 8, 0.12);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.12);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59, 130, 246, 0.12);
+      --purple: #a855f7;
+      --purple-bg: rgba(168, 85, 247, 0.12);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Login Screen ─────────────────────────────────── */
+    #login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 60%),
+                  var(--bg-primary);
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeUp 0.5s ease;
+    }
+
+    .login-logo {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--brand), #ea580c);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 32px; font-weight: 800; color: white;
+      box-shadow: 0 8px 32px rgba(249,115,22,0.25);
+    }
+
+    .login-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .login-card p { color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .login-input:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 16px;
+      background: linear-gradient(135deg, var(--brand), #ea580c);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+    .login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(249,115,22,0.3); }
+    .login-btn:active { transform: scale(0.98); }
+
+    .login-error {
+      color: var(--red);
+      font-size: 13px;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    /* ── Dashboard ────────────────────────────────────── */
+    #dashboard { display: none; animation: fadeUp 0.4s ease; }
+
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--brand), #ea580c);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 800; color: white;
+    }
+
+    .header h1 { font-size: 18px; font-weight: 700; flex: 1; }
+    .header-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      background: var(--brand-glow);
+      color: var(--brand-light);
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .logout-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 32px; }
+
+    /* ── Stats Grid ───────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+
+    .stat-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .stat-icon.green  { background: var(--green-bg);  }
+    .stat-icon.yellow { background: var(--yellow-bg); }
+    .stat-icon.red    { background: var(--red-bg);    }
+    .stat-icon.blue   { background: var(--blue-bg);   }
+    .stat-icon.purple { background: var(--purple-bg); }
+    .stat-icon.brand  { background: var(--brand-glow);}
+
+    .stat-value { font-size: 28px; font-weight: 800; margin-bottom: 2px; }
+    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── Action Bar ───────────────────────────────────── */
+    .action-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .action-bar h2 { font-size: 18px; font-weight: 700; flex: 1; }
+
+    .create-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-input {
+      padding: 10px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--brand); }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-brand {
+      background: linear-gradient(135deg, var(--brand), #ea580c);
+      color: white;
+    }
+    .btn-brand:hover { box-shadow: 0 4px 16px rgba(249,115,22,0.3); transform: translateY(-1px); }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+    .btn-green  { background: var(--green-bg);  color: var(--green);  border: 1px solid rgba(34,197,94,0.2); }
+    .btn-red    { background: var(--red-bg);    color: var(--red);    border: 1px solid rgba(239,68,68,0.2); }
+    .btn-yellow { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
+    .btn-blue   { background: var(--blue-bg);   color: var(--blue);   border: 1px solid rgba(59,130,246,0.2); }
+    .btn-sm:hover { filter: brightness(1.2); }
+
+    /* ── Table ────────────────────────────────────────── */
+    .table-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      background: rgba(0,0,0,0.15);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle;
+    }
+
+    tbody tr { transition: background 0.1s; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .key-cell {
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--brand-light);
+      letter-spacing: 0.5px;
+    }
+
+    .vendor-cell { font-weight: 500; }
+
+    .machine-cell {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .status-badge.active      { background: var(--green-bg);  color: var(--green);  }
+    .status-badge.pending      { background: var(--yellow-bg); color: var(--yellow); }
+    .status-badge.expired      { background: var(--red-bg);    color: var(--red);    }
+    .status-badge.deactivated  { background: rgba(100,116,139,0.12); color: var(--text-muted); }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .status-badge.active .status-dot { animation: pulse 2s infinite; }
+
+    .actions-cell {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .copy-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 14px;
+      padding: 2px 4px; border-radius: 4px; transition: color 0.15s;
+    }
+    .copy-btn:hover { color: var(--brand-light); }
+
+    /* ── Toast ────────────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      padding: 12px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: slideIn 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error   { border-color: rgba(239,68,68,0.3); }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    .refresh-indicator {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .refresh-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    /* ── Animations ───────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+    }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      .container { padding: 16px; }
+      .header { padding: 12px 16px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .create-form { width: 100%; }
+      .action-bar { flex-direction: column; align-items: stretch; }
+      table { font-size: 12px; }
+      thead th, tbody td { padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-logo">₹</div>
+      <h1>BillEasy Admin</h1>
+      <p>License Management Dashboard</p>
+      <input type="password" id="login-secret" class="login-input" placeholder="Enter admin secret" autofocus>
+      <button onclick="doLogin()" class="login-btn" id="login-btn">Sign In</button>
+      <div class="login-error" id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard">
+    <header class="header">
+      <div class="header-logo">₹</div>
+      <h1>BillEasy Admin</h1>
+      <span class="header-badge">License Manager</span>
+      <div class="refresh-indicator">
+        <span class="refresh-dot"></span>
+        <span>Live</span>
+      </div>
+      <button onclick="doLogout()" class="logout-btn">Sign Out</button>
+    </header>
+
+    <div class="container">
+      <!-- Stats -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon brand">🔑</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-label">Total Keys</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-value" id="stat-active">—</div>
+          <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow">⏳</div>
+          <div class="stat-value" id="stat-pending">—</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">⛔</div>
+          <div class="stat-value" id="stat-expired">—</div>
+          <div class="stat-label">Expired</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">🚫</div>
+          <div class="stat-value" id="stat-deactivated">—</div>
+          <div class="stat-label">Deactivated</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">📅</div>
+          <div class="stat-value" id="stat-week">—</div>
+          <div class="stat-label">This Week</div>
+        </div>
+      </div>
+
+      <!-- Create License -->
+      <div class="action-bar">
+        <h2>🔑 Licenses</h2>
+        <div class="create-form">
+          <input type="text" id="vendor-name" class="form-input" placeholder="Vendor / Shop name" style="width:200px">
+          <input type="date" id="expires-at" class="form-input" style="width:160px">
+          <button onclick="createLicense()" class="btn btn-brand" id="create-btn">
+            <span>+</span> Generate Key
+          </button>
+        </div>
+      </div>
+
+      <!-- License Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>License Key</th>
+              <th>Vendor</th>
+              <th>Machine</th>
+              <th>Status</th>
+              <th>Expires</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="license-table">
+            <tr><td colspan="7">
+              <div class="empty-state">
+                <div class="icon">🔐</div>
+                <p>Loading licenses...</p>
+              </div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    let TOKEN = localStorage.getItem('billeasy_admin_token') || ''
+    const API = window.location.origin
+
+    // ── Auto-login if token exists ──────────────────────
+    if (TOKEN) {
+      showDashboard()
+    }
+
+    // ── Login ───────────────────────────────────────────
+    document.getElementById('login-secret').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin()
+    })
+
+    async function doLogin() {
+      const secret = document.getElementById('login-secret').value.trim()
+      if (!secret) return
+
+      const btn = document.getElementById('login-btn')
+      btn.innerHTML = '<span class="spinner"></span> Signing in...'
+      btn.disabled = true
+
+      try {
+        const res = await fetch(`${API}/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ secret }),
+        })
+        const data = await res.json()
+
+        if (data.valid) {
+          TOKEN = data.token
+          localStorage.setItem('billeasy_admin_token', TOKEN)
+          showDashboard()
+        } else {
+          document.getElementById('login-error').textContent = data.message || 'Invalid secret'
+        }
+      } catch (e) {
+        document.getElementById('login-error').textContent = 'Connection failed. Is the server running?'
+      } finally {
+        btn.innerHTML = 'Sign In'
+        btn.disabled = false
+      }
+    }
+
+    function doLogout() {
+      TOKEN = ''
+      localStorage.removeItem('billeasy_admin_token')
+      document.getElementById('login-screen').style.display = 'flex'
+      document.getElementById('dashboard').style.display = 'none'
+      document.getElementById('login-secret').value = ''
+    }
+
+    function showDashboard() {
+      document.getElementById('login-screen').style.display = 'none'
+      document.getElementById('dashboard').style.display = 'block'
+      loadStats()
+      loadLicenses()
+
+      // Set default expiry to 1 year from now
+      const d = new Date()
+      d.setFullYear(d.getFullYear() + 1)
+      document.getElementById('expires-at').value = d.toISOString().slice(0, 10)
+    }
+
+    // ── API Helpers ─────────────────────────────────────
+    function apiHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'X-Admin-Token': TOKEN,
+      }
+    }
+
+    async function apiFetch(url, opts = {}) {
+      const res = await fetch(url, { ...opts, headers: { ...apiHeaders(), ...opts.headers } })
+      if (res.status === 401) {
+        doLogout()
+        showToast('Session expired. Please sign in again.', 'error')
+        throw new Error('Unauthorized')
+      }
+      return res.json()
+    }
+
+    // ── Load Stats ──────────────────────────────────────
+    async function loadStats() {
+      try {
+        const s = await apiFetch(`${API}/admin/stats`)
+        document.getElementById('stat-total').textContent = s.total
+        document.getElementById('stat-active').textContent = s.active
+        document.getElementById('stat-pending').textContent = s.pending
+        document.getElementById('stat-expired').textContent = s.expired
+        document.getElementById('stat-deactivated').textContent = s.deactivated
+        document.getElementById('stat-week').textContent = s.thisWeek
+      } catch (e) { /* handled by apiFetch */ }
+    }
+
+    // ── Load Licenses ───────────────────────────────────
+    async function loadLicenses() {
+      try {
+        const licenses = await apiFetch(`${API}/admin/licenses`)
+        renderTable(licenses)
+      } catch (e) { /* handled by apiFetch */ }
+    }
+
+    function renderTable(licenses) {
+      const tbody = document.getElementById('license-table')
+
+      if (licenses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7">
+          <div class="empty-state">
+            <div class="icon">🔐</div>
+            <p>No licenses yet. Generate your first key above!</p>
+          </div>
+        </td></tr>`
+        return
+      }
+
+      tbody.innerHTML = licenses.map(lic => `
+        <tr>
+          <td>
+            <span class="key-cell">${lic.key}</span>
+            <button class="copy-btn" onclick="copyKey('${lic.key}')" title="Copy key">📋</button>
+          </td>
+          <td class="vendor-cell">${escHtml(lic.vendor_name)}</td>
+          <td class="machine-cell" title="${lic.machine_id || ''}">${lic.machine_id ? lic.machine_id.substring(0, 16) + '…' : '—'}</td>
+          <td><span class="status-badge ${lic.status}"><span class="status-dot"></span>${lic.status}</span></td>
+          <td>${lic.expires_at}</td>
+          <td>${formatDate(lic.created_at)}</td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn btn-sm ${lic.active ? 'btn-red' : 'btn-green'}" onclick="toggleLicense('${lic.key}')">
+                ${lic.active ? '⏸ Disable' : '▶ Enable'}
+              </button>
+              ${lic.machine_id ? `<button class="btn btn-sm btn-yellow" onclick="unbindLicense('${lic.key}')" title="Allow re-activation on a new PC">🔓 Unbind</button>` : ''}
+              <button class="btn btn-sm btn-red" onclick="deleteLicense('${lic.key}')">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `).join('')
+    }
+
+    // ── Create License ──────────────────────────────────
+    async function createLicense() {
+      const vendorName = document.getElementById('vendor-name').value.trim()
+      const expiresAt = document.getElementById('expires-at').value
+
+      if (!vendorName) {
+        showToast('Please enter a vendor/shop name', 'error')
+        document.getElementById('vendor-name').focus()
+        return
+      }
+
+      const btn = document.getElementById('create-btn')
+      btn.innerHTML = '<span class="spinner"></span> Creating...'
+      btn.disabled = true
+
+      try {
+        const data = await apiFetch(`${API}/admin/create`, {
+          method: 'POST',
+          body: JSON.stringify({ vendorName, expiresAt: expiresAt || undefined }),
+        })
+
+        showToast(`✅ Key generated: ${data.key}`, 'success')
+        copyToClipboard(data.key)
+        document.getElementById('vendor-name').value = ''
+        loadStats()
+        loadLicenses()
+      } catch (e) {
+        showToast('Failed to create license', 'error')
+      } finally {
+        btn.innerHTML = '<span>+</span> Generate Key'
+        btn.disabled = false
+      }
+    }
+
+    // ── Toggle License ──────────────────────────────────
+    async function toggleLicense(key) {
+      try {
+        await apiFetch(`${API}/admin/toggle`, {
+          method: 'POST',
+          body: JSON.stringify({ key }),
+        })
+        showToast('License updated', 'success')
+        loadStats()
+        loadLicenses()
+      } catch (e) {
+        showToast('Failed to toggle license', 'error')
+      }
+    }
+
+    // ── Unbind Machine ──────────────────────────────────
+    async function unbindLicense(key) {
+      if (!confirm(`Unbind machine from ${key}?\nThis will allow the key to be activated on a different PC.`)) return
+      try {
+        await apiFetch(`${API}/admin/unbind`, {
+          method: 'POST',
+          body: JSON.stringify({ key }),
+        })
+        showToast('Machine unbound — key can be re-activated', 'success')
+        loadStats()
+        loadLicenses()
+      } catch (e) {
+        showToast('Failed to unbind machine', 'error')
+      }
+    }
+
+    // ── Delete License ──────────────────────────────────
+    async function deleteLicense(key) {
+      if (!confirm(`Permanently delete ${key}?\nThis cannot be undone.`)) return
+      try {
+        await apiFetch(`${API}/admin/delete`, {
+          method: 'POST',
+          body: JSON.stringify({ key }),
+        })
+        showToast('License deleted', 'success')
+        loadStats()
+        loadLicenses()
+      } catch (e) {
+        showToast('Failed to delete license', 'error')
+      }
+    }
+
+    // ── Copy Key ────────────────────────────────────────
+    function copyKey(key) {
+      copyToClipboard(key)
+      showToast(`📋 Copied: ${key}`, 'success')
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard?.writeText(text).catch(() => {
+        const el = document.createElement('textarea')
+        el.value = text
+        document.body.appendChild(el)
+        el.select()
+        document.execCommand('copy')
+        document.body.removeChild(el)
+      })
+    }
+
+    // ── Toast ───────────────────────────────────────────
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toast-container')
+      const toast = document.createElement('div')
+      toast.className = `toast ${type}`
+      toast.innerHTML = `${type === 'success' ? '✅' : '❌'} ${escHtml(msg)}`
+      container.appendChild(toast)
+      setTimeout(() => {
+        toast.style.opacity = '0'
+        toast.style.transform = 'translateX(40px)'
+        toast.style.transition = 'all 0.3s ease'
+        setTimeout(() => toast.remove(), 300)
+      }, 4000)
+    }
+
+    // ── Helpers ─────────────────────────────────────────
+    function escHtml(s) {
+      const d = document.createElement('div')
+      d.textContent = s
+      return d.innerHTML
+    }
+
+    function formatDate(dt) {
+      if (!dt) return '—'
+      const d = new Date(dt)
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    }
+
+    // ── Auto-refresh every 10s ──────────────────────────
+    setInterval(() => {
+      if (TOKEN) {
+        loadStats()
+        loadLicenses()
+      }
+    }, 10000)
+  </script>
+</body>
+</html>

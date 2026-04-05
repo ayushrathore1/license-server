@@ -1,0 +1,16 @@
+{
+  "name": "billeasy-license-server",
+  "version": "1.0.0",
+  "description": "License validation server for BillEasy",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.8.0",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
