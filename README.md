@@ -1,10 +1,10 @@
 # BillEasy License Server
 
-A Node.js/Express license validation server with an admin dashboard for managing BillEasy activation keys.
+A Node.js/Express license validation server with an admin dashboard for managing BillEasy activation keys. Uses **MongoDB** for persistent storage.
 
 ## Features
 
-- **SQLite persistence** — licenses survive server restarts
+- **MongoDB persistence** — licenses survive server restarts and redeployments
 - **Admin Dashboard** — premium dark-themed UI at `/admin`
 - **Key generation** — `BILL-XXXX-XXXX-XXXX` format
 - **Machine binding** — one key = one PC (admin can unbind)
@@ -18,7 +18,7 @@ A Node.js/Express license validation server with an admin dashboard for managing
 
 ```bash
 npm install
-ADMIN_SECRET=your_secret_here node server.js
+MONGO_URI=mongodb://localhost:27017/billeasy-licenses ADMIN_SECRET=your_secret_here node server.js
 ```
 
 Open **http://localhost:3001/admin** and sign in with your secret.
@@ -26,8 +26,11 @@ Open **http://localhost:3001/admin** and sign in with your secret.
 ## Deploy to Render.com (Free)
 
 1. Push this folder as a GitHub repo
-2. Create a **Web Service** on [render.com](https://render.com)
-3. Settings:
+2. Create a free **MongoDB Atlas** cluster at [mongodb.com/atlas](https://www.mongodb.com/atlas)
+   - Create a database user and whitelist `0.0.0.0/0` for access
+   - Copy the connection string (e.g. `mongodb+srv://user:pass@cluster.mongodb.net/billeasy-licenses`)
+3. Create a **Web Service** on [render.com](https://render.com)
+4. Settings:
 
 | Setting | Value |
 |---------|-------|
@@ -35,14 +38,15 @@ Open **http://localhost:3001/admin** and sign in with your secret.
 | Start Command | `node server.js` |
 | Plan | Free |
 
-4. Environment variables:
+5. Environment variables:
 
 | Key | Value |
 |-----|-------|
 | `ADMIN_SECRET` | A strong password |
+| `MONGO_URI` | Your MongoDB Atlas connection string |
 | `PORT` | `10000` |
 
-5. Deploy → your dashboard is at `https://YOUR-APP.onrender.com/admin`
+6. Deploy → your dashboard is at `https://YOUR-APP.onrender.com/admin`
 
 ## API Endpoints
 

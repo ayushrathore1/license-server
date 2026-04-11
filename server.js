@@ -1,7 +1,7 @@
 const express = require('express')
 const crypto = require('crypto')
 const path = require('path')
-const Database = require('better-sqlite3')
+const mongoose = require('mongoose')
 
 const app = express()
 app.use(express.json())
@@ -9,24 +9,20 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 const PORT = process.env.PORT || 3001
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'changeme'
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/billeasy-licenses'
 
-// ── SQLite Database ────────────────────────────────────────────────────────
-const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'licenses.db')
-const db = new Database(DB_PATH)
-db.pragma('journal_mode = WAL')
-db.pragma('foreign_keys = ON')
+// ── Mongoose Schema ───────────────────────────────────────────────────────
+const licenseSchema = new mongoose.Schema({
+  key:          { type: String, required: true, unique: true, index: true },
+  vendor_name:  { type: String, default: 'Unknown Vendor' },
+  machine_id:   { type: String, default: null },
+  expires_at:   { type: String, default: '2099-12-31' },
+  active:       { type: Boolean, default: true },
+  created_at:   { type: Date, default: Date.now },
+  activated_at: { type: Date, default: null },
+})
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS licenses (
-    key          TEXT PRIMARY KEY,
-    vendor_name  TEXT NOT NULL DEFAULT 'Unknown Vendor',
-    machine_id   TEXT,
-    expires_at   TEXT NOT NULL DEFAULT '2099-12-31',
-    active       INTEGER NOT NULL DEFAULT 1,
-    created_at   TEXT NOT NULL DEFAULT (datetime('now')),
-    activated_at TEXT
-  )
-`)
+const License = mongoose.model('License', licenseSchema)
 
 // ── Admin Auth Middleware ──────────────────────────────────────────────────
 function adminAuth(req, res, next) {
@@ -55,163 +51,237 @@ app.post('/admin/login', (req, res) => {
   }
 })
 
+// ── Helper: format date for comparison ────────────────────────────────────
+function todayStr() {
+  return new Date().toISOString().slice(0, 10)
+}
+
 // ── Admin: Dashboard stats ────────────────────────────────────────────────
-app.get('/admin/stats', adminAuth, (req, res) => {
-  const today = new Date().toISOString().slice(0, 10)
+app.get('/admin/stats', adminAuth, async (req, res) => {
+  try {
+    const today = todayStr()
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
-  const total = db.prepare('SELECT COUNT(*) as count FROM licenses').get().count
-  const active = db.prepare('SELECT COUNT(*) as count FROM licenses WHERE active=1 AND machine_id IS NOT NULL AND expires_at >= ?').get(today).count
-  const pending = db.prepare('SELECT COUNT(*) as count FROM licenses WHERE active=1 AND machine_id IS NULL').get().count
-  const expired = db.prepare('SELECT COUNT(*) as count FROM licenses WHERE expires_at < ?').get(today).count
-  const deactivated = db.prepare('SELECT COUNT(*) as count FROM licenses WHERE active=0').get().count
-  const thisWeek = db.prepare("SELECT COUNT(*) as count FROM licenses WHERE created_at >= datetime('now', '-7 days')").get().count
+    const [total, active, pending, expired, deactivated, thisWeek] = await Promise.all([
+      License.countDocuments(),
+      License.countDocuments({ active: true, machine_id: { $ne: null }, expires_at: { $gte: today } }),
+      License.countDocuments({ active: true, machine_id: null }),
+      License.countDocuments({ expires_at: { $lt: today } }),
+      License.countDocuments({ active: false }),
+      License.countDocuments({ created_at: { $gte: weekAgo } }),
+    ])
 
-  res.json({ total, active, pending, expired, deactivated, thisWeek })
+    res.json({ total, active, pending, expired, deactivated, thisWeek })
+  } catch (err) {
+    console.error('[STATS ERROR]', err)
+    res.status(500).json({ error: 'Failed to fetch stats' })
+  }
 })
 
 // ── Admin: List all licenses ──────────────────────────────────────────────
-app.get('/admin/licenses', adminAuth, (req, res) => {
-  const licenses = db.prepare('SELECT * FROM licenses ORDER BY created_at DESC').all()
-  const today = new Date().toISOString().slice(0, 10)
+app.get('/admin/licenses', adminAuth, async (req, res) => {
+  try {
+    const licenses = await License.find().sort({ created_at: -1 }).lean()
+    const today = todayStr()
 
-  const enriched = licenses.map(lic => ({
-    ...lic,
-    status: !lic.active ? 'deactivated'
-          : lic.expires_at < today ? 'expired'
-          : lic.machine_id ? 'active'
-          : 'pending',
-  }))
+    const enriched = licenses.map(lic => ({
+      key: lic.key,
+      vendor_name: lic.vendor_name,
+      machine_id: lic.machine_id,
+      expires_at: lic.expires_at,
+      active: lic.active,
+      created_at: lic.created_at,
+      activated_at: lic.activated_at,
+      status: !lic.active ? 'deactivated'
+            : lic.expires_at < today ? 'expired'
+            : lic.machine_id ? 'active'
+            : 'pending',
+    }))
 
-  res.json(enriched)
+    res.json(enriched)
+  } catch (err) {
+    console.error('[LIST ERROR]', err)
+    res.status(500).json({ error: 'Failed to fetch licenses' })
+  }
 })
 
 // ── Admin: Create a license key ───────────────────────────────────────────
-app.post('/admin/create', adminAuth, (req, res) => {
-  const { vendorName, expiresAt } = req.body
+app.post('/admin/create', adminAuth, async (req, res) => {
+  try {
+    const { vendorName, expiresAt } = req.body
 
-  // Also support old format with `secret` field for backward compat
-  if (!req.headers['x-admin-token'] && req.body.secret === ADMIN_SECRET) {
-    // OK — legacy auth
+    const rand = () => crypto.randomBytes(2).toString('hex').toUpperCase()
+    const key = `BILL-${rand()}-${rand()}-${rand()}`
+    const vendor = vendorName || 'Unknown Vendor'
+    const expires = expiresAt || '2099-12-31'
+
+    await License.create({
+      key,
+      vendor_name: vendor,
+      expires_at: expires,
+    })
+
+    console.log(`[CREATE] Key: ${key} | Vendor: ${vendor} | Expires: ${expires}`)
+    res.json({ key, vendorName: vendor, expiresAt: expires })
+  } catch (err) {
+    console.error('[CREATE ERROR]', err)
+    res.status(500).json({ error: 'Failed to create license' })
   }
-
-  const rand = () => crypto.randomBytes(2).toString('hex').toUpperCase()
-  const key = `BILL-${rand()}-${rand()}-${rand()}`
-  const vendor = vendorName || 'Unknown Vendor'
-  const expires = expiresAt || '2099-12-31'
-
-  db.prepare(
-    'INSERT INTO licenses (key, vendor_name, expires_at) VALUES (?, ?, ?)'
-  ).run(key, vendor, expires)
-
-  console.log(`[CREATE] Key: ${key} | Vendor: ${vendor} | Expires: ${expires}`)
-  res.json({ key, vendorName: vendor, expiresAt: expires })
 })
 
 // ── Admin: Toggle license active/inactive ─────────────────────────────────
-app.post('/admin/toggle', adminAuth, (req, res) => {
-  const { key } = req.body
-  const lic = db.prepare('SELECT * FROM licenses WHERE key=?').get(key)
-  if (!lic) return res.status(404).json({ error: 'License not found' })
+app.post('/admin/toggle', adminAuth, async (req, res) => {
+  try {
+    const { key } = req.body
+    const lic = await License.findOne({ key })
+    if (!lic) return res.status(404).json({ error: 'License not found' })
 
-  const newActive = lic.active ? 0 : 1
-  db.prepare('UPDATE licenses SET active=? WHERE key=?').run(newActive, key)
-  console.log(`[TOGGLE] Key: ${key} → ${newActive ? 'active' : 'deactivated'}`)
-  res.json({ key, active: newActive })
+    lic.active = !lic.active
+    await lic.save()
+
+    console.log(`[TOGGLE] Key: ${key} → ${lic.active ? 'active' : 'deactivated'}`)
+    res.json({ key, active: lic.active })
+  } catch (err) {
+    console.error('[TOGGLE ERROR]', err)
+    res.status(500).json({ error: 'Failed to toggle license' })
+  }
 })
 
 // ── Admin: Unbind machine (allow re-activation on different PC) ───────────
-app.post('/admin/unbind', adminAuth, (req, res) => {
-  const { key } = req.body
-  const lic = db.prepare('SELECT * FROM licenses WHERE key=?').get(key)
-  if (!lic) return res.status(404).json({ error: 'License not found' })
+app.post('/admin/unbind', adminAuth, async (req, res) => {
+  try {
+    const { key } = req.body
+    const lic = await License.findOne({ key })
+    if (!lic) return res.status(404).json({ error: 'License not found' })
 
-  db.prepare('UPDATE licenses SET machine_id=NULL, activated_at=NULL WHERE key=?').run(key)
-  console.log(`[UNBIND] Key: ${key} — machine unbound`)
-  res.json({ key, message: 'Machine unbound. Key can be activated on a new PC.' })
+    lic.machine_id = null
+    lic.activated_at = null
+    await lic.save()
+
+    console.log(`[UNBIND] Key: ${key} — machine unbound`)
+    res.json({ key, message: 'Machine unbound. Key can be activated on a new PC.' })
+  } catch (err) {
+    console.error('[UNBIND ERROR]', err)
+    res.status(500).json({ error: 'Failed to unbind machine' })
+  }
 })
 
 // ── Admin: Delete a license ───────────────────────────────────────────────
-app.post('/admin/delete', adminAuth, (req, res) => {
-  const { key } = req.body
-  const result = db.prepare('DELETE FROM licenses WHERE key=?').run(key)
-  if (result.changes === 0) return res.status(404).json({ error: 'License not found' })
+app.post('/admin/delete', adminAuth, async (req, res) => {
+  try {
+    const { key } = req.body
+    const result = await License.deleteOne({ key })
+    if (result.deletedCount === 0) return res.status(404).json({ error: 'License not found' })
 
-  console.log(`[DELETE] Key: ${key}`)
-  res.json({ message: 'License deleted.' })
+    console.log(`[DELETE] Key: ${key}`)
+    res.json({ message: 'License deleted.' })
+  } catch (err) {
+    console.error('[DELETE ERROR]', err)
+    res.status(500).json({ error: 'Failed to delete license' })
+  }
 })
 
 // ── Validate / activate a license (called by BillEasy desktop app) ────────
-app.post('/validate', (req, res) => {
-  const { key, machine_id } = req.body
+app.post('/validate', async (req, res) => {
+  try {
+    const { key, machine_id } = req.body
 
-  if (!key || !machine_id) {
-    return res.status(400).json({ valid: false, message: 'Key and machine_id are required.' })
-  }
+    if (!key || !machine_id) {
+      return res.status(400).json({ valid: false, message: 'Key and machine_id are required.' })
+    }
 
-  const license = db.prepare('SELECT * FROM licenses WHERE key=?').get(key)
+    const license = await License.findOne({ key })
 
-  if (!license) {
-    return res.json({ valid: false, message: 'Invalid license key.' })
-  }
+    if (!license) {
+      return res.json({ valid: false, message: 'Invalid license key.' })
+    }
 
-  if (!license.active) {
-    return res.json({ valid: false, message: 'This license has been deactivated.' })
-  }
+    if (!license.active) {
+      return res.json({ valid: false, message: 'This license has been deactivated.' })
+    }
 
-  // Bind machine on first activation
-  if (!license.machine_id) {
-    db.prepare("UPDATE licenses SET machine_id=?, activated_at=datetime('now') WHERE key=?")
-      .run(machine_id, key)
-    console.log(`[ACTIVATE] Key: ${key} | Machine: ${machine_id}`)
-  } else if (license.machine_id !== machine_id) {
-    return res.json({
-      valid: false,
-      message: 'This key is already activated on a different PC. Contact support.',
+    // Bind machine on first activation
+    if (!license.machine_id) {
+      license.machine_id = machine_id
+      license.activated_at = new Date()
+      await license.save()
+      console.log(`[ACTIVATE] Key: ${key} | Machine: ${machine_id}`)
+    } else if (license.machine_id !== machine_id) {
+      return res.json({
+        valid: false,
+        message: 'This key is already activated on a different PC. Contact support.',
+      })
+    }
+
+    // Check expiry
+    const today = todayStr()
+    if (license.expires_at < today) {
+      return res.json({ valid: false, message: 'License has expired. Please renew.' })
+    }
+
+    res.json({
+      valid: true,
+      vendor_name: license.vendor_name,
+      expires_at: license.expires_at,
     })
+  } catch (err) {
+    console.error('[VALIDATE ERROR]', err)
+    res.status(500).json({ valid: false, message: 'Server error during validation.' })
   }
-
-  // Check expiry
-  const today = new Date().toISOString().slice(0, 10)
-  if (license.expires_at < today) {
-    return res.json({ valid: false, message: 'License has expired. Please renew.' })
-  }
-
-  res.json({
-    valid: true,
-    vendor_name: license.vendor_name,
-    expires_at: license.expires_at,
-  })
 })
 
 // ── Legacy admin create (backward compat with secret in body) ─────────────
-app.post('/admin/create-legacy', (req, res) => {
-  const { secret, vendorName, expiresAt } = req.body
-  if (secret !== ADMIN_SECRET) {
-    return res.status(401).json({ error: 'Unauthorized' })
+app.post('/admin/create-legacy', async (req, res) => {
+  try {
+    const { secret, vendorName, expiresAt } = req.body
+    if (secret !== ADMIN_SECRET) {
+      return res.status(401).json({ error: 'Unauthorized' })
+    }
+
+    const rand = () => crypto.randomBytes(2).toString('hex').toUpperCase()
+    const key = `BILL-${rand()}-${rand()}-${rand()}`
+    const vendor = vendorName || 'Unknown Vendor'
+    const expires = expiresAt || '2099-12-31'
+
+    await License.create({
+      key,
+      vendor_name: vendor,
+      expires_at: expires,
+    })
+
+    console.log(`[CREATE-LEGACY] Key: ${key} | Vendor: ${vendor} | Expires: ${expires}`)
+    res.json({ key, vendorName: vendor, expiresAt: expires })
+  } catch (err) {
+    console.error('[CREATE-LEGACY ERROR]', err)
+    res.status(500).json({ error: 'Failed to create license' })
   }
-  req.headers['x-admin-token'] = ADMIN_SECRET
-  req.body = { vendorName, expiresAt }
-
-  // Forward to the new create handler
-  const rand = () => crypto.randomBytes(2).toString('hex').toUpperCase()
-  const key = `BILL-${rand()}-${rand()}-${rand()}`
-  const vendor = vendorName || 'Unknown Vendor'
-  const expires = expiresAt || '2099-12-31'
-
-  db.prepare(
-    'INSERT INTO licenses (key, vendor_name, expires_at) VALUES (?, ?, ?)'
-  ).run(key, vendor, expires)
-
-  console.log(`[CREATE-LEGACY] Key: ${key} | Vendor: ${vendor} | Expires: ${expires}`)
-  res.json({ key, vendorName: vendor, expiresAt: expires })
 })
 
 // ── Health check ───────────────────────────────────────────────────────────
-app.get('/health', (_, res) => res.json({ status: 'ok', licenses: db.prepare('SELECT COUNT(*) as c FROM licenses').get().c }))
-
-app.listen(PORT, () => {
-  const count = db.prepare('SELECT COUNT(*) as c FROM licenses').get().c
-  console.log(`BillEasy License Server running on port ${PORT}`)
-  console.log(`Database: ${DB_PATH} (${count} licenses)`)
-  console.log(`Admin dashboard: http://localhost:${PORT}/admin`)
+app.get('/health', async (_, res) => {
+  try {
+    const count = await License.countDocuments()
+    res.json({ status: 'ok', licenses: count })
+  } catch (err) {
+    res.json({ status: 'degraded', error: err.message })
+  }
 })
+
+// ── Connect to MongoDB & Start Server ─────────────────────────────────────
+async function start() {
+  try {
+    await mongoose.connect(MONGO_URI)
+    console.log(`✅ Connected to MongoDB`)
+
+    app.listen(PORT, () => {
+      console.log(`BillEasy License Server running on port ${PORT}`)
+      console.log(`Database: ${MONGO_URI.replace(/\/\/.*@/, '//***@')}`)
+      console.log(`Admin dashboard: http://localhost:${PORT}/admin`)
+    })
+  } catch (err) {
+    console.error('❌ Failed to connect to MongoDB:', err.message)
+    process.exit(1)
+  }
+}
+
+start()
