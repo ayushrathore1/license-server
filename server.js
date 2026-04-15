@@ -9,7 +9,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 const PORT = process.env.PORT || 3001
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'changeme'
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/billeasy-licenses'
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://rathoreayush512_db_user:MF9Ts3d6l8b4FngS@cluster0.kkrqo6c.mongodb.net/?appName=Cluster0'
 
 // ── Mongoose Schema ───────────────────────────────────────────────────────
 const licenseSchema = new mongoose.Schema({
