@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-const JWT_SECRET = 'changeme'
+const JWT_SECRET = 'elytron@krixov'
 
 function adminAuth(req, res, next) {
   const token = req.headers['x-admin-token']

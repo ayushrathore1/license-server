@@ -2,8 +2,8 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const router = express.Router()
 
-const ADMIN_SECRET = 'changeme'
-const JWT_SECRET = 'changeme'
+const ADMIN_SECRET = 'elytron@krixov'
+const JWT_SECRET = 'elytron@krixov'
 const TOKEN_EXPIRY = '24h'
 
 // POST /admin/login — verify admin secret and return JWT

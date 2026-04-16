@@ -34,7 +34,7 @@ app.use('/validate', validateRoutes)
 // Legacy create endpoint (backward compat)
 const License = require('./models/License')
 const crypto = require('crypto')
-const ADMIN_SECRET = 'changeme'
+const ADMIN_SECRET = 'elytron@krixov'
 
 app.post('/admin/create-legacy', async (req, res) => {
   try {
