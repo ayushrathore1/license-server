@@ -3,82 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BillEasy — Admin Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>BillEasy — License Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg-primary: #0a0e1a;
-      --bg-secondary: #111827;
-      --bg-card: #1a1f35;
-      --bg-card-hover: #222845;
-      --border: #2a3050;
+      --bg-body: #06080f;
+      --bg-primary: #0c1021;
+      --bg-secondary: #111730;
+      --bg-card: rgba(17, 23, 48, 0.7);
+      --bg-card-solid: #131a38;
+      --bg-card-hover: #1a2248;
+      --bg-input: #0e1328;
+      --border: rgba(255,255,255,0.06);
+      --border-light: rgba(255,255,255,0.1);
       --text-primary: #f1f5f9;
       --text-secondary: #94a3b8;
-      --text-muted: #64748b;
+      --text-muted: #586580;
       --brand: #f97316;
       --brand-light: #fb923c;
-      --brand-glow: rgba(249, 115, 22, 0.15);
-      --green: #22c55e;
-      --green-bg: rgba(34, 197, 94, 0.12);
-      --yellow: #eab308;
-      --yellow-bg: rgba(234, 179, 8, 0.12);
-      --red: #ef4444;
-      --red-bg: rgba(239, 68, 68, 0.12);
-      --blue: #3b82f6;
-      --blue-bg: rgba(59, 130, 246, 0.12);
-      --purple: #a855f7;
-      --purple-bg: rgba(168, 85, 247, 0.12);
+      --brand-dark: #ea580c;
+      --brand-glow: rgba(249, 115, 22, 0.12);
+      --brand-glow-strong: rgba(249, 115, 22, 0.25);
+      --green: #34d399;
+      --green-bg: rgba(52, 211, 153, 0.1);
+      --green-border: rgba(52, 211, 153, 0.2);
+      --yellow: #fbbf24;
+      --yellow-bg: rgba(251, 191, 36, 0.1);
+      --yellow-border: rgba(251, 191, 36, 0.2);
+      --red: #f87171;
+      --red-bg: rgba(248, 113, 113, 0.1);
+      --red-border: rgba(248, 113, 113, 0.2);
+      --blue: #60a5fa;
+      --blue-bg: rgba(96, 165, 250, 0.1);
+      --blue-border: rgba(96, 165, 250, 0.2);
+      --purple: #c084fc;
+      --purple-bg: rgba(192, 132, 252, 0.1);
+      --purple-border: rgba(192, 132, 252, 0.2);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --radius-xs: 8px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.3);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,0.5);
     }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--bg-primary);
+      background: var(--bg-body);
       color: var(--text-primary);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* ── Login Screen ─────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       LOGIN SCREEN
+       ═══════════════════════════════════════════════════════ */
     #login-screen {
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 60%),
-                  var(--bg-primary);
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(249,115,22,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(59,130,246,0.04) 0%, transparent 50%),
+        var(--bg-body);
     }
 
     .login-card {
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 48px 40px;
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 52px 44px;
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       text-align: center;
-      animation: fadeUp 0.5s ease;
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-lg);
     }
 
     .login-logo {
-      width: 64px; height: 64px;
-      background: linear-gradient(135deg, var(--brand), #ea580c);
-      border-radius: 16px;
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      border-radius: 20px;
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 24px;
-      font-size: 32px; font-weight: 800; color: white;
-      box-shadow: 0 8px 32px rgba(249,115,22,0.25);
+      margin: 0 auto 28px;
+      font-size: 36px; font-weight: 900; color: white;
+      box-shadow: 0 8px 32px var(--brand-glow-strong);
+      position: relative;
+    }
+    .login-logo::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 23px;
+      background: linear-gradient(135deg, var(--brand), transparent);
+      opacity: 0.3;
+      z-index: -1;
     }
 
-    .login-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-    .login-card p { color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; }
+    .login-card h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+    .login-card .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 36px; }
 
     .login-input {
       width: 100%;
-      padding: 14px 18px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
+      padding: 15px 20px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-light);
       border-radius: 12px;
       color: var(--text-primary);
       font-size: 15px;
@@ -93,147 +126,253 @@
 
     .login-btn {
       width: 100%;
-      padding: 14px;
-      margin-top: 16px;
-      background: linear-gradient(135deg, var(--brand), #ea580c);
+      padding: 15px;
+      margin-top: 18px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
       border: none;
       border-radius: 12px;
       color: white;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.2s;
+      letter-spacing: 0.3px;
     }
-    .login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(249,115,22,0.3); }
+    .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px var(--brand-glow-strong); }
     .login-btn:active { transform: scale(0.98); }
 
-    .login-error {
-      color: var(--red);
-      font-size: 13px;
-      margin-top: 12px;
-      min-height: 20px;
-    }
+    .login-error { color: var(--red); font-size: 13px; margin-top: 14px; min-height: 20px; }
 
-    /* ── Dashboard ────────────────────────────────────── */
-    #dashboard { display: none; animation: fadeUp 0.4s ease; }
+    /* ═══════════════════════════════════════════════════════
+       DASHBOARD LAYOUT
+       ═══════════════════════════════════════════════════════ */
+    #dashboard { display: none; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 
     .header {
-      background: var(--bg-secondary);
+      background: rgba(12, 16, 33, 0.85);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
-      padding: 16px 32px;
+      padding: 0 32px;
+      height: 64px;
       display: flex;
       align-items: center;
       gap: 16px;
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(12px);
     }
 
     .header-logo {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--brand), #ea580c);
-      border-radius: 10px;
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: 800; color: white;
+      font-size: 20px; font-weight: 900; color: white;
+      box-shadow: 0 2px 12px var(--brand-glow);
     }
 
-    .header h1 { font-size: 18px; font-weight: 700; flex: 1; }
+    .header-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
     .header-badge {
-      font-size: 11px;
+      font-size: 10px;
       padding: 4px 10px;
       background: var(--brand-glow);
       color: var(--brand-light);
       border-radius: 20px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
-    .logout-btn {
+    .header-spacer { flex: 1; }
+
+    .header-live {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+    }
+
+    .header-btn {
       padding: 8px 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xs);
       color: var(--text-secondary);
-      font-size: 13px;
+      font-size: 12px;
+      font-weight: 600;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
       transition: all 0.15s;
     }
-    .logout-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .header-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 28px 32px; }
+    .container { max-width: 1320px; margin: 0 auto; padding: 24px 32px 48px; }
 
-    /* ── Stats Grid ───────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       STATS GRID
+       ═══════════════════════════════════════════════════════ */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 28px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
     }
 
     .stat-card {
       background: var(--bg-card);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: var(--radius);
       padding: 20px;
-      transition: transform 0.15s, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
     }
-    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-color, var(--brand));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); border-color: var(--border-light); }
+    .stat-card:hover::before { opacity: 1; }
 
     .stat-icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
+      width: 42px; height: 42px;
+      border-radius: var(--radius-sm);
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
-    .stat-icon.green  { background: var(--green-bg);  }
-    .stat-icon.yellow { background: var(--yellow-bg); }
-    .stat-icon.red    { background: var(--red-bg);    }
-    .stat-icon.blue   { background: var(--blue-bg);   }
-    .stat-icon.purple { background: var(--purple-bg); }
-    .stat-icon.brand  { background: var(--brand-glow);}
 
-    .stat-value { font-size: 28px; font-weight: 800; margin-bottom: 2px; }
-    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
 
-    /* ── Action Bar ───────────────────────────────────── */
-    .action-bar {
+    /* ═══════════════════════════════════════════════════════
+       TABS & TOOLBAR
+       ═══════════════════════════════════════════════════════ */
+    .tabs-bar {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 2px;
       margin-bottom: 20px;
-      flex-wrap: wrap;
+      background: rgba(255,255,255,0.02);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      width: fit-content;
     }
+    .tab-btn {
+      padding: 8px 18px;
+      border: none;
+      border-radius: var(--radius-xs);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn:hover { color: var(--text-secondary); }
+    .tab-btn.active { background: var(--brand-glow); color: var(--brand-light); }
 
-    .action-bar h2 { font-size: 18px; font-weight: 700; flex: 1; }
-
-    .create-form {
+    .toolbar {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
+    .toolbar-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toolbar-spacer { flex: 1; }
 
-    .form-input {
-      padding: 10px 14px;
-      background: var(--bg-secondary);
+    .search-box {
+      position: relative;
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .search-input {
+      padding: 9px 14px 9px 36px;
+      background: var(--bg-input);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: var(--radius-xs);
       color: var(--text-primary);
       font-size: 13px;
       font-family: 'Inter', sans-serif;
       outline: none;
+      width: 260px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-glow); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .filter-select {
+      padding: 9px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      cursor: pointer;
       transition: border-color 0.2s;
     }
-    .form-input:focus { border-color: var(--brand); }
-    .form-input::placeholder { color: var(--text-muted); }
+    .filter-select:focus { border-color: var(--brand); }
+    .filter-select option { background: var(--bg-card-solid); }
 
+    /* ═══════════════════════════════════════════════════════
+       BUTTONS
+       ═══════════════════════════════════════════════════════ */
     .btn {
-      padding: 10px 18px;
+      padding: 9px 16px;
       border: none;
-      border-radius: 10px;
+      border-radius: var(--radius-xs);
       font-size: 13px;
       font-weight: 600;
       font-family: 'Inter', sans-serif;
@@ -242,30 +381,153 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
+
     .btn-brand {
-      background: linear-gradient(135deg, var(--brand), #ea580c);
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
       color: white;
+      box-shadow: 0 2px 8px var(--brand-glow);
     }
-    .btn-brand:hover { box-shadow: 0 4px 16px rgba(249,115,22,0.3); transform: translateY(-1px); }
+    .btn-brand:hover { box-shadow: 0 6px 24px var(--brand-glow-strong); transform: translateY(-1px); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
 
     .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: 8px;
+      padding: 5px 11px;
+      font-size: 11px;
+      border-radius: 7px;
+      gap: 4px;
     }
-    .btn-green  { background: var(--green-bg);  color: var(--green);  border: 1px solid rgba(34,197,94,0.2); }
-    .btn-red    { background: var(--red-bg);    color: var(--red);    border: 1px solid rgba(239,68,68,0.2); }
-    .btn-yellow { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
-    .btn-blue   { background: var(--blue-bg);   color: var(--blue);   border: 1px solid rgba(59,130,246,0.2); }
-    .btn-sm:hover { filter: brightness(1.2); }
 
-    /* ── Table ────────────────────────────────────────── */
+    .btn-green  { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-border); }
+    .btn-red    { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red-border); }
+    .btn-yellow { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+    .btn-blue   { background: var(--blue-bg);   color: var(--blue);   border: 1px solid var(--blue-border); }
+    .btn-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+    .btn-sm:hover { filter: brightness(1.3); transform: translateY(-1px); }
+
+    .btn-icon {
+      width: 32px; height: 32px;
+      padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius-xs);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .btn-icon:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+
+    /* ═══════════════════════════════════════════════════════
+       CREATE PANEL
+       ═══════════════════════════════════════════════════════ */
+    .create-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+    .create-panel.open { display: block; }
+
+    .create-panel h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-input {
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-glow); }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       BULK BAR
+       ═══════════════════════════════════════════════════════ */
+    .bulk-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      background: var(--brand-glow);
+      border: 1px solid rgba(249,115,22,0.2);
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+      animation: fadeUp 0.3s ease;
+    }
+    .bulk-bar.visible { display: flex; }
+    .bulk-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand-light);
+    }
+    .bulk-spacer { flex: 1; }
+
+    /* ═══════════════════════════════════════════════════════
+       TABLE
+       ═══════════════════════════════════════════════════════ */
     .table-wrapper {
       background: var(--bg-card);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: var(--radius);
       overflow: hidden;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
     }
 
     table {
@@ -276,41 +538,67 @@
 
     thead th {
       text-align: left;
-      padding: 14px 16px;
-      font-size: 11px;
-      font-weight: 600;
+      padding: 13px 16px;
+      font-size: 10px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       color: var(--text-muted);
-      background: rgba(0,0,0,0.15);
+      background: rgba(0,0,0,0.2);
       border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      user-select: none;
     }
+    thead th.sortable { cursor: pointer; }
+    thead th.sortable:hover { color: var(--text-secondary); }
 
     tbody td {
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
+      padding: 13px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.02);
       vertical-align: middle;
     }
 
     tbody tr { transition: background 0.1s; }
     tbody tr:hover { background: rgba(255,255,255,0.02); }
     tbody tr:last-child td { border-bottom: none; }
+    tbody tr.selected { background: var(--brand-glow); }
 
-    .key-cell {
-      font-family: 'Courier New', monospace;
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--brand-light);
-      letter-spacing: 0.5px;
+    .cell-check {
+      width: 36px;
+    }
+    .cell-check input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--brand);
+      cursor: pointer;
     }
 
-    .vendor-cell { font-weight: 500; }
+    .key-cell {
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--brand-light);
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 13px;
+      padding: 2px 4px; border-radius: 4px;
+      transition: color 0.15s, transform 0.1s;
+      opacity: 0.5;
+    }
+    .copy-btn:hover { color: var(--brand-light); opacity: 1; transform: scale(1.15); }
+
+    .vendor-cell { font-weight: 600; font-size: 13px; }
 
     .machine-cell {
-      font-family: 'Courier New', monospace;
-      font-size: 11px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 10px;
       color: var(--text-muted);
-      max-width: 160px;
+      max-width: 130px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -322,15 +610,15 @@
       gap: 6px;
       padding: 4px 10px;
       border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 10px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
     }
-    .status-badge.active      { background: var(--green-bg);  color: var(--green);  }
-    .status-badge.pending      { background: var(--yellow-bg); color: var(--yellow); }
-    .status-badge.expired      { background: var(--red-bg);    color: var(--red);    }
-    .status-badge.deactivated  { background: rgba(100,116,139,0.12); color: var(--text-muted); }
+    .status-badge.active      { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-border); }
+    .status-badge.pending      { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+    .status-badge.expired      { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red-border); }
+    .status-badge.deactivated  { background: rgba(100,116,139,0.08); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.15); }
 
     .status-dot {
       width: 6px; height: 6px;
@@ -341,18 +629,134 @@
 
     .actions-cell {
       display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
+      gap: 5px;
+      flex-wrap: nowrap;
     }
 
-    .copy-btn {
-      background: none; border: none; cursor: pointer;
-      color: var(--text-muted); font-size: 14px;
-      padding: 2px 4px; border-radius: 4px; transition: color 0.15s;
+    .empty-state {
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--text-muted);
     }
-    .copy-btn:hover { color: var(--brand-light); }
+    .empty-state .icon { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
+    .empty-state p { font-size: 14px; }
 
-    /* ── Toast ────────────────────────────────────────── */
+    .table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       EDIT MODAL
+       ═══════════════════════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 32px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal .modal-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-family: monospace;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       ACTIVITY LOG PANEL
+       ═══════════════════════════════════════════════════════ */
+    #activity-panel {
+      display: none;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-xs);
+      transition: background 0.1s;
+    }
+    .activity-item:hover { background: rgba(255,255,255,0.02); }
+
+    .activity-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .activity-content { flex: 1; min-width: 0; }
+    .activity-action {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .activity-key {
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--brand-light);
+    }
+    .activity-details {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .activity-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════════════════ */
     .toast-container {
       position: fixed;
       bottom: 24px;
@@ -364,47 +768,28 @@
     }
 
     .toast {
-      padding: 12px 20px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      padding: 13px 20px;
+      background: var(--bg-card-solid);
+      border: 1px solid var(--border-light);
       border-radius: 12px;
       color: var(--text-primary);
       font-size: 13px;
       font-weight: 500;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      animation: slideIn 0.3s ease;
+      box-shadow: var(--shadow-lg);
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       align-items: center;
       gap: 8px;
+      max-width: 380px;
     }
-    .toast.success { border-color: rgba(34,197,94,0.3); }
-    .toast.error   { border-color: rgba(239,68,68,0.3); }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.error   { border-left: 3px solid var(--red); }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-    .empty-state p { font-size: 14px; }
-
-    .refresh-indicator {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .refresh-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      animation: pulse 2s infinite;
-    }
-
-    /* ── Animations ───────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       ANIMATIONS
+       ═══════════════════════════════════════════════════════ */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
+      from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
     @keyframes slideIn {
@@ -413,13 +798,13 @@
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      50% { opacity: 0.3; }
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
     .spinner {
-      width: 16px; height: 16px;
+      width: 14px; height: 14px;
       border: 2px solid rgba(255,255,255,0.2);
       border-top-color: white;
       border-radius: 50%;
@@ -427,132 +812,265 @@
       display: inline-block;
     }
 
-    /* ── Responsive ───────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 768px) {
       .container { padding: 16px; }
-      .header { padding: 12px 16px; }
+      .header { padding: 0 16px; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .create-form { width: 100%; }
-      .action-bar { flex-direction: column; align-items: stretch; }
-      table { font-size: 12px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search-input { width: 100%; }
+      table { font-size: 11px; }
       thead th, tbody td { padding: 10px 12px; }
+      .modal { margin: 16px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN SCREEN -->
+  <!-- ═══════════ LOGIN ═══════════ -->
   <div id="login-screen">
     <div class="login-card">
       <div class="login-logo">₹</div>
       <h1>BillEasy Admin</h1>
-      <p>License Management Dashboard</p>
+      <p class="subtitle">License Management Dashboard</p>
       <input type="password" id="login-secret" class="login-input" placeholder="Enter admin secret" autofocus>
       <button onclick="doLogin()" class="login-btn" id="login-btn">Sign In</button>
       <div class="login-error" id="login-error"></div>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- ═══════════ DASHBOARD ═══════════ -->
   <div id="dashboard">
     <header class="header">
       <div class="header-logo">₹</div>
-      <h1>BillEasy Admin</h1>
+      <span class="header-title">BillEasy Admin</span>
       <span class="header-badge">License Manager</span>
-      <div class="refresh-indicator">
-        <span class="refresh-dot"></span>
+      <div class="header-spacer"></div>
+      <div class="header-live">
+        <span class="live-dot"></span>
         <span>Live</span>
       </div>
-      <button onclick="doLogout()" class="logout-btn">Sign Out</button>
+      <button onclick="exportCSV()" class="header-btn">📄 Export CSV</button>
+      <button onclick="doLogout()" class="header-btn">Sign Out</button>
     </header>
 
     <div class="container">
       <!-- Stats -->
       <div class="stats-grid" id="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon brand">🔑</div>
+        <div class="stat-card" style="--accent-color: var(--brand)">
+          <div class="stat-icon" style="background:var(--brand-glow)">🔑</div>
           <div class="stat-value" id="stat-total">—</div>
           <div class="stat-label">Total Keys</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon green">✅</div>
+        <div class="stat-card" style="--accent-color: var(--green)">
+          <div class="stat-icon" style="background:var(--green-bg)">✅</div>
           <div class="stat-value" id="stat-active">—</div>
           <div class="stat-label">Active</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon yellow">⏳</div>
+        <div class="stat-card" style="--accent-color: var(--yellow)">
+          <div class="stat-icon" style="background:var(--yellow-bg)">⏳</div>
           <div class="stat-value" id="stat-pending">—</div>
           <div class="stat-label">Pending</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon red">⛔</div>
+        <div class="stat-card" style="--accent-color: var(--red)">
+          <div class="stat-icon" style="background:var(--red-bg)">⛔</div>
           <div class="stat-value" id="stat-expired">—</div>
           <div class="stat-label">Expired</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon purple">🚫</div>
+        <div class="stat-card" style="--accent-color: var(--purple)">
+          <div class="stat-icon" style="background:var(--purple-bg)">🚫</div>
           <div class="stat-value" id="stat-deactivated">—</div>
           <div class="stat-label">Deactivated</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon blue">📅</div>
+        <div class="stat-card" style="--accent-color: var(--blue)">
+          <div class="stat-icon" style="background:var(--blue-bg)">📅</div>
           <div class="stat-value" id="stat-week">—</div>
           <div class="stat-label">This Week</div>
         </div>
       </div>
 
-      <!-- Create License -->
-      <div class="action-bar">
-        <h2>🔑 Licenses</h2>
-        <div class="create-form">
-          <input type="text" id="vendor-name" class="form-input" placeholder="Vendor / Shop name" style="width:200px">
-          <input type="date" id="expires-at" class="form-input" style="width:160px">
-          <button onclick="createLicense()" class="btn btn-brand" id="create-btn">
-            <span>+</span> Generate Key
+      <!-- Tabs -->
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('licenses', this)">🔑 Licenses</button>
+        <button class="tab-btn" onclick="switchTab('activity', this)">📋 Activity Log</button>
+      </div>
+
+      <!-- LICENSES TAB -->
+      <div id="licenses-panel">
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-title">License Keys</div>
+          <div class="toolbar-spacer"></div>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" class="search-input" placeholder="Search keys, vendors..." oninput="debouncedSearch()">
+          </div>
+          <select id="status-filter" class="filter-select" onchange="loadLicenses()">
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="expired">Expired</option>
+            <option value="deactivated">Deactivated</option>
+          </select>
+          <button class="btn btn-brand" onclick="toggleCreatePanel()">
+            <span>＋</span> New License
           </button>
+        </div>
+
+        <!-- Create Panel -->
+        <div class="create-panel" id="create-panel">
+          <h3>✨ Generate New License Key</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Vendor / Shop Name *</label>
+              <input type="text" id="create-vendor" class="form-input" placeholder="e.g. Royal Sweets">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="text" id="create-phone" class="form-input" placeholder="e.g. 9876543210">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" id="create-email" class="form-input" placeholder="e.g. vendor@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Expires At</label>
+              <input type="date" id="create-expires" class="form-input">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:18px">
+            <label class="form-label">Notes</label>
+            <textarea id="create-notes" class="form-input form-textarea" placeholder="Optional notes..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-brand" id="create-btn" onclick="createLicense()">
+              <span>🔑</span> Generate Key
+            </button>
+            <button class="btn btn-ghost" onclick="toggleCreatePanel()">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Bulk Bar -->
+        <div class="bulk-bar" id="bulk-bar">
+          <span class="bulk-count"><span id="bulk-count-num">0</span> selected</span>
+          <div class="bulk-spacer"></div>
+          <button class="btn btn-sm btn-green" onclick="bulkToggle(true)">▶ Enable All</button>
+          <button class="btn btn-sm btn-red" onclick="bulkToggle(false)">⏸ Disable All</button>
+          <button class="btn btn-sm btn-red" onclick="bulkDelete()">🗑 Delete All</button>
+          <button class="btn btn-sm btn-ghost" onclick="clearSelection()">✕ Clear</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="cell-check"><input type="checkbox" id="select-all" onchange="toggleSelectAll(this)"></th>
+                  <th>License Key</th>
+                  <th>Vendor</th>
+                  <th>Machine</th>
+                  <th class="sortable" onclick="setSortAndLoad('status')">Status</th>
+                  <th class="sortable" onclick="setSortAndLoad('expires')">Expires</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="license-table">
+                <tr><td colspan="8">
+                  <div class="empty-state">
+                    <div class="icon">🔐</div>
+                    <p>Loading licenses...</p>
+                  </div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span id="table-count">0 licenses</span>
+            <span id="table-info"></span>
+          </div>
         </div>
       </div>
 
-      <!-- License Table -->
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>License Key</th>
-              <th>Vendor</th>
-              <th>Machine</th>
-              <th>Status</th>
-              <th>Expires</th>
-              <th>Created</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="license-table">
-            <tr><td colspan="7">
-              <div class="empty-state">
-                <div class="icon">🔐</div>
-                <p>Loading licenses...</p>
-              </div>
-            </td></tr>
-          </tbody>
-        </table>
+      <!-- ACTIVITY TAB -->
+      <div id="activity-panel">
+        <div class="toolbar">
+          <div class="toolbar-title">📋 Recent Activity</div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-ghost" onclick="loadActivity()">🔄 Refresh</button>
+        </div>
+        <div class="table-wrapper" style="padding: 8px 0;">
+          <div class="activity-list" id="activity-list">
+            <div class="empty-state">
+              <div class="icon">📋</div>
+              <p>Loading activity...</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Toast Container -->
+  <!-- EDIT MODAL -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+      <h3>✏️ Edit License</h3>
+      <div class="modal-subtitle" id="edit-modal-key"></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Vendor Name</label>
+          <input type="text" id="edit-vendor" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="text" id="edit-phone" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="edit-email" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expires At</label>
+          <input type="date" id="edit-expires" class="form-input">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="edit-notes" class="form-input form-textarea"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+        <button class="btn btn-brand" id="edit-save-btn" onclick="saveEdit()">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
   <div class="toast-container" id="toast-container"></div>
 
   <script>
-    let TOKEN = localStorage.getItem('billeasy_admin_token') || ''
+    // ═══════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════
+    let TOKEN = localStorage.getItem('billeasy_admin_token_v2') || ''
     const API = window.location.origin
+    let currentSort = ''
+    let selectedKeys = new Set()
+    let allLicenses = []
+    let searchTimeout = null
 
-    // ── Auto-login if token exists ──────────────────────
-    if (TOKEN) {
-      showDashboard()
-    }
+    // Auto-login if token exists
+    if (TOKEN) showDashboard()
 
-    // ── Login ───────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // AUTH
+    // ═══════════════════════════════════════════════════════
     document.getElementById('login-secret').addEventListener('keydown', e => {
       if (e.key === 'Enter') doLogin()
     })
@@ -575,7 +1093,7 @@
 
         if (data.valid) {
           TOKEN = data.token
-          localStorage.setItem('billeasy_admin_token', TOKEN)
+          localStorage.setItem('billeasy_admin_token_v2', TOKEN)
           showDashboard()
         } else {
           document.getElementById('login-error').textContent = data.message || 'Invalid secret'
@@ -590,10 +1108,11 @@
 
     function doLogout() {
       TOKEN = ''
-      localStorage.removeItem('billeasy_admin_token')
+      localStorage.removeItem('billeasy_admin_token_v2')
       document.getElementById('login-screen').style.display = 'flex'
       document.getElementById('dashboard').style.display = 'none'
       document.getElementById('login-secret').value = ''
+      document.getElementById('login-error').textContent = ''
     }
 
     function showDashboard() {
@@ -602,18 +1121,17 @@
       loadStats()
       loadLicenses()
 
-      // Set default expiry to 1 year from now
+      // Default expiry: 1 year from now
       const d = new Date()
       d.setFullYear(d.getFullYear() + 1)
-      document.getElementById('expires-at').value = d.toISOString().slice(0, 10)
+      document.getElementById('create-expires').value = d.toISOString().slice(0, 10)
     }
 
-    // ── API Helpers ─────────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // API HELPERS
+    // ═══════════════════════════════════════════════════════
     function apiHeaders() {
-      return {
-        'Content-Type': 'application/json',
-        'X-Admin-Token': TOKEN,
-      }
+      return { 'Content-Type': 'application/json', 'X-Admin-Token': TOKEN }
     }
 
     async function apiFetch(url, opts = {}) {
@@ -623,75 +1141,156 @@
         showToast('Session expired. Please sign in again.', 'error')
         throw new Error('Unauthorized')
       }
+      const contentType = res.headers.get('content-type')
+      if (contentType && contentType.includes('text/csv')) {
+        return res
+      }
       return res.json()
     }
 
-    // ── Load Stats ──────────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // TABS
+    // ═══════════════════════════════════════════════════════
+    function switchTab(tab, el) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+      el.classList.add('active')
+
+      document.getElementById('licenses-panel').style.display = tab === 'licenses' ? 'block' : 'none'
+      document.getElementById('activity-panel').style.display = tab === 'activity' ? 'block' : 'none'
+
+      if (tab === 'activity') loadActivity()
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // STATS
+    // ═══════════════════════════════════════════════════════
     async function loadStats() {
       try {
         const s = await apiFetch(`${API}/admin/stats`)
-        document.getElementById('stat-total').textContent = s.total
-        document.getElementById('stat-active').textContent = s.active
-        document.getElementById('stat-pending').textContent = s.pending
-        document.getElementById('stat-expired').textContent = s.expired
-        document.getElementById('stat-deactivated').textContent = s.deactivated
-        document.getElementById('stat-week').textContent = s.thisWeek
-      } catch (e) { /* handled by apiFetch */ }
+        animateCounter('stat-total', s.total)
+        animateCounter('stat-active', s.active)
+        animateCounter('stat-pending', s.pending)
+        animateCounter('stat-expired', s.expired)
+        animateCounter('stat-deactivated', s.deactivated)
+        animateCounter('stat-week', s.thisWeek)
+      } catch (e) { /* handled */ }
     }
 
-    // ── Load Licenses ───────────────────────────────────
+    function animateCounter(id, target) {
+      const el = document.getElementById(id)
+      const current = parseInt(el.textContent) || 0
+      if (current === target) return
+
+      const diff = target - current
+      const steps = Math.min(Math.abs(diff), 20)
+      const inc = diff / steps
+      let step = 0
+
+      const timer = setInterval(() => {
+        step++
+        el.textContent = Math.round(current + inc * step)
+        if (step >= steps) {
+          el.textContent = target
+          clearInterval(timer)
+        }
+      }, 30)
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // LICENSES
+    // ═══════════════════════════════════════════════════════
     async function loadLicenses() {
       try {
-        const licenses = await apiFetch(`${API}/admin/licenses`)
+        const search = document.getElementById('search-input').value.trim()
+        const status = document.getElementById('status-filter').value
+
+        let url = `${API}/admin/licenses?`
+        if (search) url += `search=${encodeURIComponent(search)}&`
+        if (status) url += `status=${status}&`
+        if (currentSort) url += `sort=${currentSort}&`
+
+        const licenses = await apiFetch(url)
+        allLicenses = licenses
         renderTable(licenses)
-      } catch (e) { /* handled by apiFetch */ }
+      } catch (e) { /* handled */ }
+    }
+
+    function debouncedSearch() {
+      clearTimeout(searchTimeout)
+      searchTimeout = setTimeout(loadLicenses, 300)
+    }
+
+    function setSortAndLoad(sort) {
+      currentSort = currentSort === sort ? '' : sort
+      loadLicenses()
     }
 
     function renderTable(licenses) {
       const tbody = document.getElementById('license-table')
+      document.getElementById('table-count').textContent = `${licenses.length} license${licenses.length !== 1 ? 's' : ''}`
 
       if (licenses.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7">
+        tbody.innerHTML = `<tr><td colspan="8">
           <div class="empty-state">
             <div class="icon">🔐</div>
-            <p>No licenses yet. Generate your first key above!</p>
+            <p>No licenses found. Generate your first key!</p>
           </div>
         </td></tr>`
         return
       }
 
       tbody.innerHTML = licenses.map(lic => `
-        <tr>
+        <tr class="${selectedKeys.has(lic.key) ? 'selected' : ''}" id="row-${lic.key.replace(/[^a-zA-Z0-9]/g, '')}">
+          <td class="cell-check">
+            <input type="checkbox" ${selectedKeys.has(lic.key) ? 'checked' : ''} onchange="toggleSelect('${lic.key}', this)">
+          </td>
           <td>
-            <span class="key-cell">${lic.key}</span>
-            <button class="copy-btn" onclick="copyKey('${lic.key}')" title="Copy key">📋</button>
+            <div class="key-cell">
+              <span>${lic.key}</span>
+              <button class="copy-btn" onclick="copyKey('${lic.key}')" title="Copy key">📋</button>
+            </div>
           </td>
           <td class="vendor-cell">${escHtml(lic.vendor_name)}</td>
-          <td class="machine-cell" title="${lic.machine_id || ''}">${lic.machine_id ? lic.machine_id.substring(0, 16) + '…' : '—'}</td>
+          <td class="machine-cell" title="${lic.machine_id || ''}">${lic.machine_id ? lic.machine_id.substring(0, 14) + '…' : '<span style="color:var(--text-muted)">—</span>'}</td>
           <td><span class="status-badge ${lic.status}"><span class="status-dot"></span>${lic.status}</span></td>
-          <td>${lic.expires_at}</td>
-          <td>${formatDate(lic.created_at)}</td>
+          <td style="font-size:12px;color:var(--text-secondary)">${lic.expires_at}</td>
+          <td style="font-size:12px;color:var(--text-muted)">${formatDate(lic.created_at)}</td>
           <td>
             <div class="actions-cell">
-              <button class="btn btn-sm ${lic.active ? 'btn-red' : 'btn-green'}" onclick="toggleLicense('${lic.key}')">
-                ${lic.active ? '⏸ Disable' : '▶ Enable'}
+              <button class="btn btn-sm btn-blue" onclick="openEditModal('${lic.key}')" title="Edit">✏️</button>
+              <button class="btn btn-sm ${lic.active ? 'btn-red' : 'btn-green'}" onclick="toggleLicense('${lic.key}')" title="${lic.active ? 'Disable' : 'Enable'}">
+                ${lic.active ? '⏸' : '▶'}
               </button>
-              ${lic.machine_id ? `<button class="btn btn-sm btn-yellow" onclick="unbindLicense('${lic.key}')" title="Allow re-activation on a new PC">🔓 Unbind</button>` : ''}
-              <button class="btn btn-sm btn-red" onclick="deleteLicense('${lic.key}')">🗑</button>
+              ${lic.machine_id ? `<button class="btn btn-sm btn-yellow" onclick="unbindLicense('${lic.key}')" title="Unbind machine">🔓</button>` : ''}
+              ${lic.status === 'expired' ? `<button class="btn btn-sm btn-green" onclick="renewLicense('${lic.key}')" title="Renew">🔄</button>` : ''}
+              <button class="btn btn-sm btn-red" onclick="deleteLicense('${lic.key}')" title="Delete">🗑</button>
             </div>
           </td>
         </tr>
       `).join('')
     }
 
-    // ── Create License ──────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // CREATE
+    // ═══════════════════════════════════════════════════════
+    function toggleCreatePanel() {
+      const panel = document.getElementById('create-panel')
+      panel.classList.toggle('open')
+      if (panel.classList.contains('open')) {
+        document.getElementById('create-vendor').focus()
+      }
+    }
+
     async function createLicense() {
-      const vendorName = document.getElementById('vendor-name').value.trim()
-      const expiresAt = document.getElementById('expires-at').value
+      const vendorName = document.getElementById('create-vendor').value.trim()
+      const vendorPhone = document.getElementById('create-phone').value.trim()
+      const vendorEmail = document.getElementById('create-email').value.trim()
+      const expiresAt = document.getElementById('create-expires').value
+      const notes = document.getElementById('create-notes').value.trim()
 
       if (!vendorName) {
         showToast('Please enter a vendor/shop name', 'error')
-        document.getElementById('vendor-name').focus()
+        document.getElementById('create-vendor').focus()
         return
       }
 
@@ -702,73 +1301,269 @@
       try {
         const data = await apiFetch(`${API}/admin/create`, {
           method: 'POST',
-          body: JSON.stringify({ vendorName, expiresAt: expiresAt || undefined }),
+          body: JSON.stringify({ vendorName, vendorPhone, vendorEmail, expiresAt: expiresAt || undefined, notes }),
         })
 
-        showToast(`✅ Key generated: ${data.key}`, 'success')
+        showToast(`Key generated: ${data.key}`, 'success')
         copyToClipboard(data.key)
-        document.getElementById('vendor-name').value = ''
+
+        // Clear form
+        document.getElementById('create-vendor').value = ''
+        document.getElementById('create-phone').value = ''
+        document.getElementById('create-email').value = ''
+        document.getElementById('create-notes').value = ''
+
         loadStats()
         loadLicenses()
       } catch (e) {
         showToast('Failed to create license', 'error')
       } finally {
-        btn.innerHTML = '<span>+</span> Generate Key'
+        btn.innerHTML = '<span>🔑</span> Generate Key'
         btn.disabled = false
       }
     }
 
-    // ── Toggle License ──────────────────────────────────
-    async function toggleLicense(key) {
+    // ═══════════════════════════════════════════════════════
+    // EDIT MODAL
+    // ═══════════════════════════════════════════════════════
+    let editingKey = null
+
+    function openEditModal(key) {
+      const lic = allLicenses.find(l => l.key === key)
+      if (!lic) return
+
+      editingKey = key
+      document.getElementById('edit-modal-key').textContent = key
+      document.getElementById('edit-vendor').value = lic.vendor_name || ''
+      document.getElementById('edit-phone').value = lic.vendor_phone || ''
+      document.getElementById('edit-email').value = lic.vendor_email || ''
+      document.getElementById('edit-expires').value = lic.expires_at || ''
+      document.getElementById('edit-notes').value = lic.notes || ''
+
+      document.getElementById('edit-modal').classList.add('open')
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.remove('open')
+      editingKey = null
+    }
+
+    // Close modal on overlay click
+    document.getElementById('edit-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('edit-modal')) closeEditModal()
+    })
+
+    async function saveEdit() {
+      if (!editingKey) return
+
+      const btn = document.getElementById('edit-save-btn')
+      btn.innerHTML = '<span class="spinner"></span> Saving...'
+      btn.disabled = true
+
       try {
-        await apiFetch(`${API}/admin/toggle`, {
-          method: 'POST',
-          body: JSON.stringify({ key }),
+        await apiFetch(`${API}/admin/edit`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            key: editingKey,
+            vendorName: document.getElementById('edit-vendor').value.trim(),
+            vendorPhone: document.getElementById('edit-phone').value.trim(),
+            vendorEmail: document.getElementById('edit-email').value.trim(),
+            expiresAt: document.getElementById('edit-expires').value,
+            notes: document.getElementById('edit-notes').value.trim(),
+          }),
         })
+
         showToast('License updated', 'success')
-        loadStats()
+        closeEditModal()
         loadLicenses()
       } catch (e) {
-        showToast('Failed to toggle license', 'error')
+        showToast('Failed to update license', 'error')
+      } finally {
+        btn.innerHTML = '💾 Save Changes'
+        btn.disabled = false
       }
     }
 
-    // ── Unbind Machine ──────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // LICENSE ACTIONS
+    // ═══════════════════════════════════════════════════════
+    async function toggleLicense(key) {
+      try {
+        await apiFetch(`${API}/admin/toggle`, { method: 'POST', body: JSON.stringify({ key }) })
+        showToast('License status updated', 'success')
+        loadStats()
+        loadLicenses()
+      } catch (e) { showToast('Failed to toggle license', 'error') }
+    }
+
     async function unbindLicense(key) {
       if (!confirm(`Unbind machine from ${key}?\nThis will allow the key to be activated on a different PC.`)) return
       try {
-        await apiFetch(`${API}/admin/unbind`, {
-          method: 'POST',
-          body: JSON.stringify({ key }),
-        })
+        await apiFetch(`${API}/admin/unbind`, { method: 'POST', body: JSON.stringify({ key }) })
         showToast('Machine unbound — key can be re-activated', 'success')
         loadStats()
         loadLicenses()
-      } catch (e) {
-        showToast('Failed to unbind machine', 'error')
-      }
+      } catch (e) { showToast('Failed to unbind machine', 'error') }
     }
 
-    // ── Delete License ──────────────────────────────────
+    async function renewLicense(key) {
+      const newDate = prompt(`Enter new expiry date for ${key}:`, getOneYearFromNow())
+      if (!newDate) return
+      try {
+        await apiFetch(`${API}/admin/renew`, { method: 'POST', body: JSON.stringify({ key, expiresAt: newDate }) })
+        showToast('License renewed', 'success')
+        loadStats()
+        loadLicenses()
+      } catch (e) { showToast('Failed to renew license', 'error') }
+    }
+
     async function deleteLicense(key) {
       if (!confirm(`Permanently delete ${key}?\nThis cannot be undone.`)) return
       try {
-        await apiFetch(`${API}/admin/delete`, {
-          method: 'POST',
-          body: JSON.stringify({ key }),
-        })
+        await apiFetch(`${API}/admin/delete`, { method: 'POST', body: JSON.stringify({ key }) })
         showToast('License deleted', 'success')
+        selectedKeys.delete(key)
+        updateBulkBar()
         loadStats()
         loadLicenses()
+      } catch (e) { showToast('Failed to delete license', 'error') }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // SELECTION & BULK
+    // ═══════════════════════════════════════════════════════
+    function toggleSelect(key, checkbox) {
+      if (checkbox.checked) {
+        selectedKeys.add(key)
+      } else {
+        selectedKeys.delete(key)
+      }
+      const row = checkbox.closest('tr')
+      if (row) row.classList.toggle('selected', checkbox.checked)
+      updateBulkBar()
+    }
+
+    function toggleSelectAll(checkbox) {
+      if (checkbox.checked) {
+        allLicenses.forEach(l => selectedKeys.add(l.key))
+      } else {
+        selectedKeys.clear()
+      }
+      renderTable(allLicenses)
+      updateBulkBar()
+    }
+
+    function clearSelection() {
+      selectedKeys.clear()
+      document.getElementById('select-all').checked = false
+      renderTable(allLicenses)
+      updateBulkBar()
+    }
+
+    function updateBulkBar() {
+      const bar = document.getElementById('bulk-bar')
+      const count = selectedKeys.size
+      document.getElementById('bulk-count-num').textContent = count
+      bar.classList.toggle('visible', count > 0)
+    }
+
+    async function bulkToggle(active) {
+      if (selectedKeys.size === 0) return
+      const keys = [...selectedKeys]
+      if (!confirm(`${active ? 'Enable' : 'Disable'} ${keys.length} license(s)?`)) return
+
+      try {
+        await apiFetch(`${API}/admin/bulk/toggle`, { method: 'POST', body: JSON.stringify({ keys, active }) })
+        showToast(`${keys.length} licenses ${active ? 'enabled' : 'disabled'}`, 'success')
+        clearSelection()
+        loadStats()
+        loadLicenses()
+      } catch (e) { showToast('Bulk operation failed', 'error') }
+    }
+
+    async function bulkDelete() {
+      if (selectedKeys.size === 0) return
+      const keys = [...selectedKeys]
+      if (!confirm(`Permanently delete ${keys.length} license(s)?\nThis cannot be undone.`)) return
+
+      try {
+        await apiFetch(`${API}/admin/bulk/delete`, { method: 'POST', body: JSON.stringify({ keys }) })
+        showToast(`${keys.length} licenses deleted`, 'success')
+        clearSelection()
+        loadStats()
+        loadLicenses()
+      } catch (e) { showToast('Bulk delete failed', 'error') }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // ACTIVITY LOG
+    // ═══════════════════════════════════════════════════════
+    const ACTION_CONFIG = {
+      CREATE:      { icon: '✨', bg: 'var(--green-bg)',   label: 'Created' },
+      ACTIVATE:    { icon: '🔗', bg: 'var(--blue-bg)',    label: 'Activated' },
+      DEACTIVATE:  { icon: '⏸', bg: 'var(--red-bg)',     label: 'Deactivated' },
+      ENABLE:      { icon: '▶', bg: 'var(--green-bg)',   label: 'Enabled' },
+      UNBIND:      { icon: '🔓', bg: 'var(--yellow-bg)',  label: 'Unbound' },
+      DELETE:      { icon: '🗑', bg: 'var(--red-bg)',     label: 'Deleted' },
+      RENEW:       { icon: '🔄', bg: 'var(--blue-bg)',    label: 'Renewed' },
+      EDIT:        { icon: '✏️', bg: 'var(--purple-bg)',  label: 'Edited' },
+      BULK_CREATE: { icon: '📦', bg: 'var(--green-bg)',   label: 'Bulk Created' },
+      BULK_TOGGLE: { icon: '📦', bg: 'var(--yellow-bg)',  label: 'Bulk Toggled' },
+      BULK_DELETE: { icon: '📦', bg: 'var(--red-bg)',     label: 'Bulk Deleted' },
+    }
+
+    async function loadActivity() {
+      try {
+        const logs = await apiFetch(`${API}/admin/activity?limit=100`)
+        const list = document.getElementById('activity-list')
+
+        if (logs.length === 0) {
+          list.innerHTML = `<div class="empty-state"><div class="icon">📋</div><p>No activity yet</p></div>`
+          return
+        }
+
+        list.innerHTML = logs.map(log => {
+          const cfg = ACTION_CONFIG[log.action] || { icon: '•', bg: 'var(--bg-card)', label: log.action }
+          return `
+            <div class="activity-item">
+              <div class="activity-icon" style="background:${cfg.bg}">${cfg.icon}</div>
+              <div class="activity-content">
+                <div class="activity-action">${cfg.label}</div>
+                ${log.license_key ? `<div class="activity-key">${log.license_key}</div>` : ''}
+                ${log.details ? `<div class="activity-details" title="${escHtml(log.details)}">${escHtml(log.details)}</div>` : ''}
+              </div>
+              <div class="activity-time">${formatTimeAgo(log.timestamp)}</div>
+            </div>
+          `
+        }).join('')
+      } catch (e) { /* handled */ }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // EXPORT CSV
+    // ═══════════════════════════════════════════════════════
+    async function exportCSV() {
+      try {
+        const res = await apiFetch(`${API}/admin/export`)
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `billeasy_licenses_${new Date().toISOString().slice(0,10)}.csv`
+        a.click()
+        URL.revokeObjectURL(url)
+        showToast('CSV exported', 'success')
       } catch (e) {
-        showToast('Failed to delete license', 'error')
+        showToast('Export failed', 'error')
       }
     }
 
-    // ── Copy Key ────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════════════════════
     function copyKey(key) {
       copyToClipboard(key)
-      showToast(`📋 Copied: ${key}`, 'success')
+      showToast(`Copied: ${key}`, 'success')
     }
 
     function copyToClipboard(text) {
@@ -782,7 +1577,38 @@
       })
     }
 
-    // ── Toast ───────────────────────────────────────────
+    function escHtml(s) {
+      if (!s) return ''
+      const d = document.createElement('div')
+      d.textContent = s
+      return d.innerHTML
+    }
+
+    function formatDate(dt) {
+      if (!dt) return '—'
+      const d = new Date(dt)
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    }
+
+    function formatTimeAgo(dt) {
+      if (!dt) return ''
+      const diff = Date.now() - new Date(dt).getTime()
+      const mins = Math.floor(diff / 60000)
+      if (mins < 1) return 'just now'
+      if (mins < 60) return `${mins}m ago`
+      const hrs = Math.floor(mins / 60)
+      if (hrs < 24) return `${hrs}h ago`
+      const days = Math.floor(hrs / 24)
+      if (days < 7) return `${days}d ago`
+      return formatDate(dt)
+    }
+
+    function getOneYearFromNow() {
+      const d = new Date()
+      d.setFullYear(d.getFullYear() + 1)
+      return d.toISOString().slice(0, 10)
+    }
+
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toast-container')
       const toast = document.createElement('div')
@@ -797,20 +1623,9 @@
       }, 4000)
     }
 
-    // ── Helpers ─────────────────────────────────────────
-    function escHtml(s) {
-      const d = document.createElement('div')
-      d.textContent = s
-      return d.innerHTML
-    }
-
-    function formatDate(dt) {
-      if (!dt) return '—'
-      const d = new Date(dt)
-      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-    }
-
-    // ── Auto-refresh every 10s ──────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // AUTO-REFRESH
+    // ═══════════════════════════════════════════════════════
     setInterval(() => {
       if (TOKEN) {
         loadStats()
